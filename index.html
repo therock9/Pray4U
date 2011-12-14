@@ -6,9 +6,26 @@
 <link rel="stylesheet" href="jquery.mobile-1.0.css" /> 
 <script src="jquery.js"></script> 
 <script src="jquery.mobile-1.0.js"></script>
+
 <script type="text/javascript">
 $( function() {
+
+	$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/Sum",
+		data: { x: JSON.stringify("Now i am getting jsop string") },
+		dataType: "jsonp",
+		success: function(json) {
+			alert(json.d);
+		},
+		error: function() {
+			alert("Hit error fn!");
+		}
+	});
+	
 	document.addEventListener("deviceready", onDeviceReady, false);
+	
+	
+	
+	
 });
 // PhoneGap is loaded and it is now safe to make calls PhoneGap methods
 function onDeviceReady() {
