@@ -10,21 +10,37 @@
 <script type="text/javascript">
 $( function() {
 
-	$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/Sum",
-		data: { x: JSON.stringify("Now i am getting jsop string") },
-		dataType: "jsonp",
-		success: function(json) {
-			alert(json.d);
-		},
-		error: function() {
-			alert("Hit error fn!");
-		}
+	alert(window.localStorage.getItem("userID"));
+
+	$("#btnLogin").click(function() {	
+		
+		var email = $( "#email" ),
+			password = $( "#password" );
+		
+		var userID = "";
+	
+		$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/UserLogin",
+			data: { email: JSON.stringify(email.val()), password: JSON.stringify(password.val()) },
+			dataType: "jsonp",
+			success: function(json) {				
+				if (json.d == "") {
+					alert("Sorry, you have entered an incorrect username and password");
+				}
+				else {
+					userID = json.d;
+					
+					window.localStorage.setItem("userID", userID);
+					window.localStorage.setItem("email", email.val());
+					window.localStorage.setItem("password", password());					
+				}
+			},
+			error: function() {
+				alert("Hit error fn!");
+			}
+		});
 	});
 	
-	document.addEventListener("deviceready", onDeviceReady, false);
-	
-	
-	
+	document.addEventListener("deviceready", onDeviceReady, false);			
 	
 });
 // PhoneGap is loaded and it is now safe to make calls PhoneGap methods
@@ -46,38 +62,12 @@ function onDeviceReady() {
 			<div data-role="fieldcontain" class="ui-hide-label">
 	         <label for="password">Password:</label>
 	         <input type="password" name="password" id="password" value="" placeholder="Password" />
-			</div>
-			
+			</div>			
 			<button type="submit" id="btnLogin" data-theme="b" data-inline="true">Login</button>
-			<a href="#signup" data-role="button" data-theme="c" data-inline="true">Signup</a>
-			<a href="#forgotpassword" data-role="button" data-theme="a">Forgot password</a>
+			<a href="signup.html" rel="external" data-role="button" data-theme="c" data-inline="true">Signup</a>
+			<a href="forgotpassword.html" rel="external" data-role="button" data-theme="a">Forgot password</a>
 		</div> 
-	</div> 
-	<div data-role="page" id="signup"> 
-		<div data-role="header"> 
-			<h1>Signup</h1> 
-		</div>
-		<div data-role="content"> 
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="sEmail">Username:</label>
-	         <input type="text" name="sEmail" id="sEmail" value="" placeholder="Email address"/>
-			</div>
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="sPassword">Password:</label>
-	         <input type="password" name="sPassword" id="sPassword" value="" placeholder="Password" />
-			</div>
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="aPasswordConfirm">Confirm Password:</label>
-	         <input type="text" name="aPasswordConfirm" id="aPasswordConfirm" value="" placeholder="Confirm password"/>
-			</div>
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="aAlias">Alias:</label>
-	         <input type="text" name="aAlias" id="aAlias" value="" placeholder="Alias" />
-			</div>
-			<button type="submit" id="btnSignup" data-theme="b" data-inline="true">Signup</button>
-			<a href="#Login" data-role="button" data-theme="c" data-inline="true">Cancel</a>
-		</div> 
-	</div>
+	</div> 	
 	<div data-role="page" id="forgotpassword"> 
 		<div data-role="header"> 
 			<h1>Forgot your password</h1> 
