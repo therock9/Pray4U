@@ -2,10 +2,10 @@
 <html>
 <head>
 <title>Login</title>
-<script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.js"></script>
-<link rel="stylesheet" href="jquery.mobile-1.0.css" /> 
-<script src="jquery.js"></script> 
-<script src="jquery.mobile-1.0.js"></script>
+<script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.min.js"></script>
+<link rel="stylesheet" href="jquery.mobile-1.0.min.css" /> 
+<script src="jquery.min.js"></script> 
+<script src="jquery.mobile-1.0.min.js"></script>
 
 <script type="text/javascript">
 $( function() {
@@ -53,7 +53,7 @@ $( function() {
 		var bValid = true;
 		var errorMsg = "";
 		
-		/*
+		
 		if (!checkLength( password, 6, 16 )) {
 			errorMsg += "Password must be between 6 to 16 characters. \n";
 			bValid = false;
@@ -74,7 +74,7 @@ $( function() {
 			errorMsg += "Your confirm password field must same as your password. \n";
 			bValid = false;
 		}
-		*/
+		
 		// call ajax to check whether email already existed
 		$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/CheckEmailExisted",
 			data: { email: JSON.stringify(email.val()) },
@@ -95,24 +95,9 @@ $( function() {
 			error: function() {
 				alert("Hit error fn!");
 			}
-		});
-		
-		
-		
-				
+		});	
 	});
-		
-				
-	$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/Sum",
-		data: { x: JSON.stringify("Now i am getting jsop string") },
-		dataType: "jsonp",
-		success: function(json) {
-			alert(json.d);
-		},
-		error: function() {
-			alert("Hit error fn!");
-		}
-	});
+					
 	
 	document.addEventListener("deviceready", onDeviceReady, false);			
 	

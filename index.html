@@ -2,15 +2,19 @@
 <html>
 <head>
 <title>Login</title>
-<script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.js"></script>
-<link rel="stylesheet" href="jquery.mobile-1.0.css" /> 
-<script src="jquery.js"></script> 
-<script src="jquery.mobile-1.0.js"></script>
+<script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.min.js"></script>
+<link rel="stylesheet" href="jquery.mobile-1.0.min.css" /> 
+<script src="jquery.min.js"></script> 
+<script src="jquery.mobile-1.0.min.js"></script>
 
 <script type="text/javascript">
 $( function() {
 
-	alert(window.localStorage.getItem("userID"));
+	if (window.localStorage.getItem("userID") != "" && 
+		window.localStorage.getItem("email") != "" &&
+		window.localStorage.getItem("password") != "") {
+		
+	}
 
 	$("#btnLogin").click(function() {	
 		
