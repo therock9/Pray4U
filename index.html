@@ -9,19 +9,25 @@
 
 <script type="text/javascript">
 $( function() {
-
-	if (window.localStorage.getItem("userID") != "" && 
-		window.localStorage.getItem("email") != "" &&
-		window.localStorage.getItem("password") != "") {
-		
+	
+	if (window.localStorage.getItem("userID") != null &&
+		window.localStorage.getItem("alias") != null && 
+		window.localStorage.getItem("email") != null &&
+		window.localStorage.getItem("password") != null) {
+		window.location="main.html";
 	}
-
+	
+	alert(window.localStorage.getItem("userID") + window.localStorage.getItem("alias") +
+		window.localStorage.getItem("email") + window.localStorage.getItem("password"));
+	
+	// Login page info
 	$("#btnLogin").click(function() {	
 		
 		var email = $( "#email" ),
 			password = $( "#password" );
 		
-		var userID = "";
+		var userID = "",
+			alias = "";
 	
 		$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/UserLogin",
 			data: { email: JSON.stringify(email.val()), password: JSON.stringify(password.val()) },
@@ -30,12 +36,22 @@ $( function() {
 				if (json.d == "") {
 					alert("Sorry, you have entered an incorrect username and password");
 				}
-				else {
-					userID = json.d;
+				else {					
+					alert("hello");
+					var output = json.d.split("~!#!~");
 					
+					alert(output);
+					if (output.length == 2) {
+						userID = output[0];
+						alias = output[1];
+					}						
+					alert(alias);
 					window.localStorage.setItem("userID", userID);
+					window.localStorage.setItem("alias", alias);
 					window.localStorage.setItem("email", email.val());
-					window.localStorage.setItem("password", password());					
+					window.localStorage.setItem("password", password.val());	
+
+					window.location="main.html";					
 				}
 			},
 			error: function() {
@@ -43,6 +59,104 @@ $( function() {
 			}
 		});
 	});
+	
+	
+	// Signup page info
+	function checkLength( o, min, max ) {
+		if ( o.val().length > max || o.val().length < min ) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function checkRegexp( o, regexp) {
+		if ( !( regexp.test( o.val() ) ) ) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	function userSignup(email, password, alias) {				
+		$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/UserSignup",
+			data: { email: JSON.stringify(email), password: JSON.stringify(password), alias: JSON.stringify(alias) },
+			dataType: "jsonp",
+			success: function(json) {
+				if (json.d == "") {
+					alert("Cannot insert");
+				}
+				else {
+					alert("memberID: " + json.d);
+				}
+			},
+			error: function() {
+				alert("Hit error fn!");
+			}
+		});	
+	}
+		
+	$("#btnSignup").click(function() {			
+		var email = $( "#sEmail" ),
+			password = $( "#sPassword" ),
+			passwordConfirm = $( "#sPasswordConfirm" ),
+			alias = $( "#sAlias" );
+			
+		var bValid = true;
+		var errorMsg = "";
+		
+		
+		if (!checkLength( password, 6, 16 )) {
+			errorMsg += "Password must be between 6 to 16 characters. \n";
+			bValid = false;
+		}
+		if (!checkLength( email, 6, 80 )) {
+			errorMsg += "Please enter a proper email. \n";
+			bValid = false;
+		}
+		if (!checkLength( alias, 3, 16 )) {
+			errorMsg += "Your alias name must be between 3 to 16 character. \n";
+			bValid = false;
+		}					
+		if (!checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i)) {
+			errorMsg += "Your email address is incorrect format. \n";
+			bValid = false;
+		}
+		if (passwordConfirm.val() != password.val()) {
+			errorMsg += "Your confirm password field must same as your password. \n";
+			bValid = false;
+		}
+		
+		// call ajax to check whether email already existed
+		$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/CheckEmailExisted",
+			data: { email: JSON.stringify(email.val()) },
+			dataType: "jsonp",
+			async: false,
+			success: function(json) {
+				if (json.d == "existed") {
+					errorMsg += "Your email address is already existed. \n";
+					bValid = false;		
+				}				
+				if (!bValid) {
+					alert(errorMsg);
+				}
+				else {
+					userSignup(email.val(), password.val(), alias.val());
+				}
+			},
+			error: function() {
+				alert("Hit error fn!");
+			}
+		});	
+	});
+	
+	
+	// forgot password info
+	// something here
+	
+	
+	
+	
 	
 	document.addEventListener("deviceready", onDeviceReady, false);			
 	
@@ -68,10 +182,35 @@ function onDeviceReady() {
 	         <input type="password" name="password" id="password" value="" placeholder="Password" />
 			</div>			
 			<button type="submit" id="btnLogin" data-theme="b" data-inline="true">Login</button>
-			<a href="signup.html" rel="external" data-role="button" data-theme="c" data-inline="true">Signup</a>
-			<a href="forgotpassword.html" rel="external" data-role="button" data-theme="a">Forgot password</a>
+			<a href="#signup" data-role="button" data-theme="c" data-inline="true" data-transition="none">Signup</a>
+			<a href="#forgotpassword" data-role="button" data-theme="a" data-transition="none">Forgot password</a>
 		</div> 
 	</div> 	
+	<div data-role="page" id="signup"> 
+		<div data-role="header"> 
+			<h1>Signup</h1> 
+		</div>
+		<div data-role="content"> 
+			<div data-role="fieldcontain" class="ui-hide-label">
+	         <label for="sEmail">Email:</label>
+	         <input type="text" name="sEmail" id="sEmail" value="" placeholder="Email address"/>
+			</div>
+			<div data-role="fieldcontain" class="ui-hide-label">
+	         <label for="sPassword">Password:</label>
+	         <input type="password" name="sPassword" id="sPassword" value="" placeholder="Password" />
+			</div>
+			<div data-role="fieldcontain" class="ui-hide-label">
+	         <label for="sPasswordConfirm">Confirm Password:</label>
+	         <input type="password" name="sPasswordConfirm" id="sPasswordConfirm" value="" placeholder="Confirm password"/>
+			</div>
+			<div data-role="fieldcontain" class="ui-hide-label">
+	         <label for="sAlias">Alias:</label>
+	         <input type="text" name="sAlias" id="sAlias" value="" placeholder="Alias" />
+			</div>
+			<button type="submit" id="btnSignup" data-theme="b" data-inline="true">Signup</button>
+			<a data-rel="back" data-role="button" data-theme="c" data-inline="true">Cancel</a>
+		</div> 
+	</div>
 	<div data-role="page" id="forgotpassword"> 
 		<div data-role="header"> 
 			<h1>Forgot your password</h1> 
@@ -80,7 +219,7 @@ function onDeviceReady() {
 	         <label for="fpEmail">Please enter your email address:</label>
 	         <input type="text" name="fpEmail" id="fpEmail" value="" placeholder="Email address"/>
 			 <button type="submit" id="btnForgotPassword" data-theme="b" data-inline="true">Send password</button>
-			 <a href="#Login" data-role="button" data-theme="c" data-inline="true">Cancel</a>
+			 <a data-rel="back" data-role="button" data-theme="c" data-inline="true">Cancel</a>
 		</div>
 	</div>
 </body>

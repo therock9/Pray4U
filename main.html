@@ -4,12 +4,88 @@
 <title>Login</title>
 <script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.min.js"></script>
 <link rel="stylesheet" href="jquery.mobile-1.0.min.css" /> 
+<style>
+
+ .alternateRow { border-bottom: 1px solid #f0f0f0; background: #eeeeee; }
+
+</style>
+
 <script src="jquery.min.js"></script> 
 <script src="jquery.mobile-1.0.min.js"></script>
 
 <script type="text/javascript">
 $( function() {
 	
+	//window.localStorage.clear();
+	$("#pageTitle").html("Welcome " + window.localStorage.getItem("alias"));
+	
+	$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/GetPraylist",
+		data: {},
+		dataType: "jsonp",
+		success: function(json) {		
+			alert(json.d);
+			dataTable = json.d.mydt;
+			outputDataTable(dataTable); // output the datatable
+		},
+		error: function() {
+			alert("Hit error fn!");
+		}
+	});
+	
+	
+	// Output datatable to a grid table display
+    function outputDataTable(dataTable) {
+        var headers = [];
+        var rows = [];
+        var count = 0;
+        var i = 0;
+        //totalCount = 0;
+
+        //headers.push("<thead><tr>");
+        //for (var name in dataTable[0])
+        //   headers.push("<th><b>" + name + "</b></th>");
+        //headers.push("</tr></thead>");
+
+        //alert(dataTable.length);
+
+        //datatable contain fn-firstname, ln-lastname, em-email
+
+        //RangeFrom = currentPage * pageSize; //calculate which recipient start according to the page number
+        //RangeTo = parseInt(RangeFrom) + parseInt(pageSize); //calculate which recipient show the end according to the page number
+
+        totalCount = 0;
+       
+
+        //alert(RangeFrom + ", " + RangeTo);
+		alert(dataTable.length);
+        for (i = 0; i < dataTable.length; i++) {
+            boolCount = false;
+			var myDate = new Date(dataTable[i]["DatePosted"].toString());
+			
+            strRow = "<tr><td>" + dataTable[i]["Alias"] + " - " + dataTable[i]["DatePosted"] + "<br />" + dataTable[i]["Title"] + "<br />" + dataTable[i]["Message"] + "<br /> ";
+			
+            strRow += "<a href='#' id='prayed" + dataTable[i]["mid"] + "'>Prayed</a> Comment Watchlist</td></tr>";
+
+            rows.push(strRow);
+        }
+
+        $("#tbPraylist tbody").html(rows.join(''));
+
+        $("#tbPraylist tr:even").removeClass("alternateRow").addClass("alternateRow"); //give alternate color in the table
+
+        // Reset edit detail button and set the onclick event                       
+        //$(".editRecipient").unbind('click');
+        //$(".editRecipient").click(function () {
+            
+        //    return false;
+        //});
+    }
+	
+	
+	
+	
+	
+	// Signup page info
 	function checkLength( o, min, max ) {
 		if ( o.val().length > max || o.val().length < min ) {
 			return false;
@@ -97,7 +173,14 @@ $( function() {
 			}
 		});	
 	});
-					
+	
+	
+	// forgot password info
+	// something here
+	
+	
+	
+	
 	
 	document.addEventListener("deviceready", onDeviceReady, false);			
 	
@@ -109,30 +192,36 @@ function onDeviceReady() {
 </script>  
 </head>
 <body>
+	<div data-role="page" id="Main"> 
+		<div data-role="header"> 
+			<h1 id="pageTitle">Welcome </h1> 
+		</div> 
+		<div data-role="content">
+			<table id="tbPraylist" width="100%" cellpadding="4" cellspacing="0">
+				<tbody>
+				
+				</tbody>
+			</table>
+		</div> 
+	</div> 	
 	<div data-role="page" id="signup"> 
 		<div data-role="header"> 
 			<h1>Signup</h1> 
 		</div>
 		<div data-role="content"> 
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="sEmail">Email:</label>
-	         <input type="text" name="aEmail" id="sEmail" value="" placeholder="Email address"/>
-			</div>
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="sPassword">Password:</label>
-	         <input type="password" name="sPassword" id="sPassword" value="" placeholder="Password" />
-			</div>
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="sPasswordConfirm">Confirm Password:</label>
-	         <input type="password" name="sPasswordConfirm" id="sPasswordConfirm" value="" placeholder="Confirm password"/>
-			</div>
-			<div data-role="fieldcontain" class="ui-hide-label">
-	         <label for="sAlias">Alias:</label>
-	         <input type="text" name="sAlias" id="sAlias" value="" placeholder="Alias" />
-			</div>
-			<button type="submit" id="btnSignup" data-theme="b" data-inline="true">Signup</button>
-			<a href="index.html" rel="external" data-role="button" data-theme="c" data-inline="true">Cancel</a>
+			
 		</div> 
-	</div>	
+	</div>
+	<div data-role="page" id="forgotpassword"> 
+		<div data-role="header"> 
+			<h1>Forgot your password</h1> 
+		</div> 
+		<div data-role="content"> 
+	         <label for="fpEmail">Please enter your email address:</label>
+	         <input type="text" name="fpEmail" id="fpEmail" value="" placeholder="Email address"/>
+			 <button type="submit" id="btnForgotPassword" data-theme="b" data-inline="true">Send password</button>
+			 <a data-rel="back" data-role="button" data-theme="c" data-inline="true">Cancel</a>
+		</div>
+	</div>
 </body>
 </html>
