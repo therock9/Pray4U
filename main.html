@@ -12,25 +12,30 @@
 
 <script src="jquery.min.js"></script> 
 <script src="jquery.mobile-1.0.min.js"></script>
+<script src="jquery.mobile.themeswitcher.js"></script>
 
 <script type="text/javascript">
 $( function() {
 	
 	//window.localStorage.clear();
-	$("#pageTitle").html("Welcome " + window.localStorage.getItem("alias"));
+	$.mobile.fixedToolbars.setTouchToggleEnabled(false);
 	
-	$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/GetPraylist",
-		data: {},
-		dataType: "jsonp",
-		success: function(json) {		
-			alert(json.d);
-			dataTable = json.d.mydt;
-			outputDataTable(dataTable); // output the datatable
-		},
-		error: function() {
-			alert("Hit error fn!");
-		}
-	});
+	getPraylist();
+	
+	function getPraylist() {
+		$.ajax({ url: "http://mobiletest.proofing.wired.co.nz/JsonService.asmx/GetPraylist",
+			data: {},
+			dataType: "jsonp",
+			success: function(json) {		
+				alert(json.d);
+				dataTable = json.d.mydt;
+				outputDataTable(dataTable); // output the datatable
+			},
+			error: function() {
+				alert("Hit error fn!");
+			}
+		});
+	}
 	
 	
 	// Output datatable to a grid table display
@@ -62,16 +67,19 @@ $( function() {
             boolCount = false;
 			var myDate = new Date(dataTable[i]["DatePosted"].toString());
 			
-            strRow = "<tr><td>" + dataTable[i]["Alias"] + " - " + dataTable[i]["DatePosted"] + "<br />" + dataTable[i]["Title"] + "<br />" + dataTable[i]["Message"] + "<br /> ";
+						
 			
-            strRow += "<a href='#' id='prayed" + dataTable[i]["mid"] + "'>Prayed</a> Comment Watchlist</td></tr>";
+            strRow = "<li><a href='index.html'  style='white-space:normal;'><h3>" + dataTable[i]["Alias"] + " - " + dataTable[i]["DatePosted"] + "</h3><p><strong>" + dataTable[i]["Title"] + "</strong></p><p>" + dataTable[i]["Message"] + "</p></a> ";
+			
+            strRow += "<div data-type='horizontal'  data-role='controlgroup'><a href='#' id='prayed" + dataTable[i]["mid"] + "'>Prayed</a> Comment Watchlist</div></li>";
 
             rows.push(strRow);
         }
 
-        $("#tbPraylist tbody").html(rows.join(''));
+        $("#tbPraylist ul").html(rows.join(''));
 
-        $("#tbPraylist tr:even").removeClass("alternateRow").addClass("alternateRow"); //give alternate color in the table
+		$("#tbPraylist ul").listview("refresh");
+        //$("#tbPraylist:even").removeClass("alternateRow").addClass("alternateRow"); //give alternate color in the table
 
         // Reset edit detail button and set the onclick event                       
         //$(".editRecipient").unbind('click');
@@ -119,6 +127,10 @@ $( function() {
 			}
 		});	
 	}
+		
+	$("#btnRefresh").click(function() {
+		getPraylist();
+	});
 		
 	$("#btnSignup").click(function() {			
 		var email = $( "#sEmail" ),
@@ -193,18 +205,29 @@ function onDeviceReady() {
 </head>
 <body>
 	<div data-role="page" id="Main"> 
-		<div data-role="header"> 
-			<h1 id="pageTitle">Welcome </h1> 
+		<div data-id="myheader" data-role="header" data-position="fixed" data-theme="b"> 
+			<a href="index.html" data-icon="plus">Add Prayer</a>
+			<h1 id="pageTitle">Prayer List </h1> 
+			<a href="index.html">Logout</a>			
 		</div> 
-		<div data-role="content">
-			<table id="tbPraylist" width="100%" cellpadding="4" cellspacing="0">
-				<tbody>
-				
-				</tbody>
-			</table>
+		<div data-role="content" data-theme="d" id="tbPraylist">
+			<div class="content-primary">
+			<ul data-role="listview">			
+				<li><a href="acura.html">Acura</a></li>
+				<li><a href="audi.html">Audi</a></li>
+				<li><a href="bmw.html">BMW</a></li>
+			</ul>
+			</div>
+		</div> 
+		<div data-id="myfooter" data-role="footer" class="ui-bar" data-position="fixed" data-theme="c"> 
+			<div data-type="horizontal"  data-role="controlgroup">
+			<a href="index.html" data-role="button" data-icon="arrow-d">My Prayer</a>
+			<a href="index.html" data-role="button" data-icon="star">My Watchlist</a>
+			<a href="#" data-role="button" data-icon="refresh" id="btnRefresh">Refresh</a>
+			</div>
 		</div> 
 	</div> 	
-	<div data-role="page" id="signup"> 
+	<div data-role="page" id="signup" > 
 		<div data-role="header"> 
 			<h1>Signup</h1> 
 		</div>
@@ -222,6 +245,7 @@ function onDeviceReady() {
 			 <button type="submit" id="btnForgotPassword" data-theme="b" data-inline="true">Send password</button>
 			 <a data-rel="back" data-role="button" data-theme="c" data-inline="true">Cancel</a>
 		</div>
+		
 	</div>
 </body>
 </html>
